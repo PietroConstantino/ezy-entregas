@@ -1,0 +1,20 @@
+name = "ezy-entregas"
+main = "index.html"
+type = "javascript"
+account_id = ""
+workers_dev = false
+route = ""
+zone_id = ""
+compatibility_date = "2024-08-18"
+
+[env.production]
+name = "ezy-entregas-production"
+
+[build]
+command = "npm run build"
+cwd = "./"
+watch_paths = ["src/**/*.js"]
+
+[build.upload]
+format = "modules"
+main = "./index.html"
