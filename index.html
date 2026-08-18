@@ -131,8 +131,8 @@ button.label-profile-card > b {
     body.autenticado .auth-gate{display:none}
     body:not(.autenticado) .header,body:not(.autenticado) .topbar,body:not(.autenticado) .app{display:none}
     .auth-gate{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 85% 10%,rgba(115,45,135,.24),transparent 30%),#050817;padding:20px}
-    .auth-card{width:100%;max-width:360px;background:linear-gradient(145deg,rgba(18,27,51,.98),rgba(7,12,29,.98));border:1px solid #263351;border-radius:20px;padding:28px 24px;box-shadow:0 22px 55px rgba(0,0,0,.4)}
-    .auth-logo{display:block;width:100%;max-width:220px;margin:0 auto 20px}
+    .auth-card{width:100%;max-width:460px;background:linear-gradient(145deg,rgba(18,27,51,.98),rgba(7,12,29,.98));border:1px solid #263351;border-radius:20px;padding:28px 24px;box-shadow:0 22px 55px rgba(0,0,0,.4)}
+    .auth-logo{display:block;width:100%;max-width:340px;margin:0 auto 24px}
     .auth-form{display:flex;flex-direction:column;gap:12px}
     .auth-form .field label{color:#91a4c8}
     .auth-submit{width:100%}
@@ -539,6 +539,18 @@ button.label-profile-card > b {
     var sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+
+    function mascararTelefone(input){
+      input.addEventListener('input',function(){
+        var d=this.value.replace(/\D/g,'').slice(0,11);
+        if(d.length>10)this.value='('+d.slice(0,2)+') '+d.slice(2,7)+'-'+d.slice(7);
+        else if(d.length>6)this.value='('+d.slice(0,2)+') '+d.slice(2,6)+'-'+d.slice(6);
+        else if(d.length>2)this.value='('+d.slice(0,2)+') '+d.slice(2);
+        else if(d.length>0)this.value='('+d;
+        else this.value='';
+      });
+    }
+    ['boot-telefone','novo-usuario-telefone'].forEach(function(id){var el=document.getElementById(id);if(el)mascararTelefone(el)});
     function mostrarErro(el,msg){el.textContent=msg;el.classList.remove('hidden')}
     function esconderErro(el){el.classList.add('hidden')}
 
