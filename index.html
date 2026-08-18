@@ -124,10 +124,46 @@ button.label-profile-card > b {
       .report-grid>.report-field:not(.search) select{padding-right:26px!important;background-position:calc(100% - 14px) 14px,calc(100% - 9px) 14px!important;background-size:5px 5px!important}
       .report-actions .btn{padding:9px 14px!important;font-size:.78rem!important}
     </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    .hidden{display:none!important}
+    body.autenticado .auth-gate{display:none}
+    body:not(.autenticado) .header,body:not(.autenticado) .topbar,body:not(.autenticado) .app{display:none}
+    .auth-gate{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 85% 10%,rgba(115,45,135,.24),transparent 30%),#050817;padding:20px}
+    .auth-card{width:100%;max-width:360px;background:linear-gradient(145deg,rgba(18,27,51,.98),rgba(7,12,29,.98));border:1px solid #263351;border-radius:20px;padding:28px 24px;box-shadow:0 22px 55px rgba(0,0,0,.4)}
+    .auth-logo{display:block;width:100%;max-width:220px;margin:0 auto 20px}
+    .auth-form{display:flex;flex-direction:column;gap:12px}
+    .auth-form .field label{color:#91a4c8}
+    .auth-submit{width:100%}
+    .auth-bootstrap-link{width:100%;margin-top:12px}
+    .auth-erro{color:#ff6b75;background:rgba(220,50,65,.12);border-radius:10px;padding:8px 12px;font-size:.82rem;margin:0}
+  </style>
 </head>
 <body>
-  <header class="header"><div class="header-inner"><img class="brand-logo" src="assets/ezy-entregas-logo.svg" alt="Ezy Entregas"></div><div class="side-label">Principal</div><nav class="side-nav"><a class="active" data-page-link href="#dashboard"><span class="side-icon">▦</span>Dashboard</a><a data-page-link href="#nova"><span class="side-icon">📷</span>Nova carga</a><a data-page-link href="#carga"><span class="side-icon">📦</span>Cadastradas</a><a data-page-link href="#pendentes"><span class="side-icon">⚠️</span>Ocorrências <span id="pendentes-badge" class="pending-badge">0</span></a></nav><div class="side-label">Navegação</div><nav class="side-nav"><a data-page-link href="#rotas"><span class="side-icon">🗺️</span>Rotas</a><a data-page-link href="#calibracao"><span class="side-icon">🏷️</span>Calibrar etiquetas</a><a data-page-link href="#relatorios"><span class="side-icon">📊</span>Relatórios</a></nav></header>
-  <div class="topbar"><div class="topbar-title"><button id="menu-toggle" class="menu-toggle" type="button" aria-label="Recolher menu">☰</button><b>Dashboard de Entregas</b></div><div class="topbar-date"><span id="data-topo"></span><i class="top-avatar">EZ</i></div></div>
+  <div id="auth-gate" class="auth-gate">
+    <div class="auth-card">
+      <img class="auth-logo" src="assets/ezy-entregas-logo.svg" alt="Ezy Entregas">
+      <form id="auth-form" class="auth-form">
+        <div class="field"><label for="auth-login">Usuário</label><input id="auth-login" autocomplete="username" required></div>
+        <div class="field"><label for="auth-senha">Senha</label><input id="auth-senha" type="password" autocomplete="current-password" required></div>
+        <p id="auth-erro" class="auth-erro hidden"></p>
+        <button type="submit" class="btn primary auth-submit">Entrar</button>
+      </form>
+      <button id="auth-mostrar-bootstrap" type="button" class="btn ghost auth-bootstrap-link">Primeiro acesso? Criar administrador</button>
+      <form id="bootstrap-form" class="auth-form hidden">
+        <div class="field"><label for="boot-nome">Nome</label><input id="boot-nome" required></div>
+        <div class="field"><label for="boot-telefone">Telefone</label><input id="boot-telefone"></div>
+        <div class="field"><label for="boot-login">Usuário</label><input id="boot-login" required></div>
+        <div class="field"><label for="boot-senha">Senha (mín. 8 caracteres)</label><input id="boot-senha" type="password" minlength="8" required></div>
+        <p id="boot-erro" class="auth-erro hidden"></p>
+        <button type="submit" class="btn primary auth-submit">Criar administrador</button>
+        <button id="boot-cancelar" type="button" class="btn ghost auth-submit">Cancelar</button>
+      </form>
+    </div>
+  </div>
+  <header class="header"><div class="header-inner"><img class="brand-logo" src="assets/ezy-entregas-logo.svg" alt="Ezy Entregas"></div><div class="side-label">Principal</div><nav class="side-nav"><a class="active" data-page-link href="#dashboard"><span class="side-icon">▦</span>Dashboard</a><a data-page-link href="#nova"><span class="side-icon">📷</span>Nova carga</a><a data-page-link href="#carga"><span class="side-icon">📦</span>Cadastradas</a><a data-page-link href="#pendentes"><span class="side-icon">⚠️</span>Ocorrências <span id="pendentes-badge" class="pending-badge">0</span></a></nav><div class="side-label">Navegação</div><nav class="side-nav"><a data-page-link href="#rotas"><span class="side-icon">🗺️</span>Rotas</a><a data-page-link href="#calibracao"><span class="side-icon">🏷️</span>Calibrar etiquetas</a><a data-page-link href="#relatorios"><span class="side-icon">📊</span>Relatórios</a><a data-page-link href="#usuarios" class="hidden" data-admin-only><span class="side-icon">👤</span>Usuários</a><a data-page-link href="#rastreio" class="hidden" data-admin-only><span class="side-icon">📍</span>Rastreio ao vivo</a></nav></header>
+  <div class="topbar"><div class="topbar-title"><button id="menu-toggle" class="menu-toggle" type="button" aria-label="Recolher menu">☰</button><b>Dashboard de Entregas</b></div><div class="topbar-date"><span id="data-topo"></span><button id="auth-sair" class="btn ghost" type="button" style="margin-left:12px">Sair</button><i class="top-avatar">EZ</i></div></div>
   <main class="app">
     <section class="panel page-section page-active" id="dashboard"><h2>Visão geral</h2><p class="dashboard-welcome">Acompanhe rapidamente a situação atual da operação.</p><div class="summary"><div class="stat"><b id="total">0</b><span>mercadorias</span></div><div class="stat"><b id="carregadas">0</b><span>carregadas</span></div><div class="stat"><b id="paradas">0</b><span>paradas</span></div><div class="stat"><b id="ceps-unicos">0</b><span>CEPs únicos</span></div></div><div class="chart-card"><div class="donut-wrap"><div id="status-donut" class="donut"><div class="donut-center"><b id="donut-total">0</b><span>mercadorias</span></div></div></div><div class="chart-info"><h3>Distribuição das entregas</h3><p>Status atualizado em tempo real.</p><div class="chart-legend"><div class="legend-row"><i class="legend-dot" style="--dot:#00e6a8"></i><span>Entregues</span><b id="legend-entregues">0</b></div><div class="legend-row"><i class="legend-dot" style="--dot:#2aa8ff"></i><span>Carregadas</span><b id="legend-carregadas">0</b></div><div class="legend-row"><i class="legend-dot" style="--dot:#ffb52e"></i><span>Aguardando</span><b id="legend-aguardando">0</b></div><div class="legend-row"><i class="legend-dot" style="--dot:#ff3d72"></i><span>Pendentes</span><b id="legend-pendentes">0</b></div></div></div></div><h2>Áreas de CEP</h2><div id="resumo-ceps" class="cep-kpis"></div></section>
     <section class="panel page-section" id="nova">
@@ -198,6 +234,26 @@ button.label-profile-card > b {
         </div>
       </div>
       <p class="privacy-note">🔒 Apenas as configurações textuais do modelo são armazenadas. A imagem de calibração é descartada após o teste.</p>
+    </section>
+    <section class="panel page-section" id="usuarios">
+      <h2>👤 Usuários</h2>
+      <p class="parcel-meta">Cadastre entregadores com nome, telefone e cargo. Cada um recebe um usuário e senha próprios.</p>
+      <div class="grid">
+        <div class="field"><label for="novo-usuario-nome">Nome</label><input id="novo-usuario-nome"></div>
+        <div class="field"><label for="novo-usuario-telefone">Telefone</label><input id="novo-usuario-telefone"></div>
+        <div class="field"><label for="novo-usuario-login">Usuário (login)</label><input id="novo-usuario-login"></div>
+        <div class="field"><label for="novo-usuario-senha">Senha inicial (mín. 8 caracteres)</label><input id="novo-usuario-senha" type="password" minlength="8"></div>
+        <div class="field"><label for="novo-usuario-papel">Cargo</label><select id="novo-usuario-papel"><option value="visualizador">Visualizador (entregador)</option><option value="admin">Admin</option></select></div>
+      </div>
+      <div class="actions"><button id="cadastrar-usuario" class="btn primary" type="button">Cadastrar</button></div>
+      <p id="usuarios-erro" class="notice hidden"></p>
+      <div id="usuarios-lista" class="pending-list" style="margin-top:18px"></div>
+    </section>
+    <section class="panel page-section" id="rastreio">
+      <h2>📍 Rastreio ao vivo</h2>
+      <p class="parcel-meta">Mostra a localização dos entregadores com rota ativa nas últimas 24 horas.</p>
+      <div id="rastreio-mapa" style="height:520px;border-radius:16px;overflow:hidden;margin-top:14px"></div>
+      <div id="rastreio-lista" class="pending-list" style="margin-top:18px"></div>
     </section>
   </main>
   <div id="toast" class="toast" role="status"></div>
@@ -462,15 +518,213 @@ button.label-profile-card > b {
     $('ordenar-proximidade').addEventListener('click',ordenarPorProximidade);
     $('sentido-proximidade').addEventListener('click',inverterSentidoProximidade);
     $('route-orders').addEventListener('click',function(ev){var botao=ev.target.closest&&ev.target.closest('[data-route-status]');if(!botao)return;var item=itens.find(function(i){return i.id===botao.dataset.routeId});if(!item||item.statusEntrega!=='coletado')return;var status=botao.dataset.routeStatus,rotulo=status==='entregue'?'Entregue':status==='nao_localizado'?'End. não localizado':'Não entregue';if(!confirm('Confirmar o resultado “'+rotulo+'” para '+item.nome+'?'))return;item.statusEntrega=status;item.carregada=status==='entregue';if(status==='entregue')item.entregueEm=new Date().toISOString();else{item.entregueEm='';if(status==='nao_entregue')item.tentativas=item.tentativas||1}salvarRotaAtiva();salvar();toast('Resultado registrado. O pedido continua visível na rota ativa.')});
-    $('rota').addEventListener('click',function(){var unicos=[],vistos={};itensDaRotaOrdenados().filter(function(i){return i.statusEntrega==='coletado'}).forEach(function(i){var k=chave(i);if(!vistos[k]){vistos[k]=1;unicos.push(enderecoCompleto(i))}});if(!unicos.length)return;salvarRotaAtiva();var destino=unicos[Math.min(unicos.length,10)-1],way=unicos.slice(0,Math.min(unicos.length,10)-1);var url='https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+encodeURIComponent(destino);if(way.length)url+='&waypoints='+encodeURIComponent(way.join('|'));window.open(url,'_blank','noopener');if(unicos.length>10)toast('Abertas as primeiras 10 paradas. Restam '+(unicos.length-10)+' para uma segunda rota. A rota ativa foi mantida.')});
-    $('waze').addEventListener('click',function(){var proxima=itensDaRotaOrdenados().filter(function(i){return i.statusEntrega==='coletado'})[0];if(!proxima)return;salvarRotaAtiva();window.open('https://www.waze.com/ul?q='+encodeURIComponent(enderecoCompleto(proxima))+'&navigate=yes','_blank','noopener')});
-    function abrirAba(){var id=(location.hash||'#dashboard').slice(1),validas=['dashboard','nova','carga','pendentes','rotas','calibracao','relatorios'];if(!validas.includes(id))id='dashboard';document.querySelectorAll('.page-section').forEach(function(el){el.classList.toggle('page-active',el.id===id)});document.querySelectorAll('[data-page-link]').forEach(function(el){el.classList.toggle('active',el.getAttribute('href')==='#'+id)});var titulos={dashboard:'Dashboard de Entregas',nova:'Nova carga',carga:'Entregas cadastradas',pendentes:'Ocorrências',rotas:'Planejamento de rotas',calibracao:'Calibrar etiquetas',relatorios:'Relatórios'};document.querySelector('.topbar-title b').textContent=titulos[id];if(id==='calibracao')renderPerfisEtiqueta();window.scrollTo({top:0,behavior:'smooth'})}
+    $('rota').addEventListener('click',function(){if(window.EzyRastreio)window.EzyRastreio.iniciarSessao();var unicos=[],vistos={};itensDaRotaOrdenados().filter(function(i){return i.statusEntrega==='coletado'}).forEach(function(i){var k=chave(i);if(!vistos[k]){vistos[k]=1;unicos.push(enderecoCompleto(i))}});if(!unicos.length)return;salvarRotaAtiva();var destino=unicos[Math.min(unicos.length,10)-1],way=unicos.slice(0,Math.min(unicos.length,10)-1);var url='https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+encodeURIComponent(destino);if(way.length)url+='&waypoints='+encodeURIComponent(way.join('|'));window.open(url,'_blank','noopener');if(unicos.length>10)toast('Abertas as primeiras 10 paradas. Restam '+(unicos.length-10)+' para uma segunda rota. A rota ativa foi mantida.')});
+    $('waze').addEventListener('click',function(){if(window.EzyRastreio)window.EzyRastreio.iniciarSessao();var proxima=itensDaRotaOrdenados().filter(function(i){return i.statusEntrega==='coletado'})[0];if(!proxima)return;salvarRotaAtiva();window.open('https://www.waze.com/ul?q='+encodeURIComponent(enderecoCompleto(proxima))+'&navigate=yes','_blank','noopener')});
+    function abrirAba(){var id=(location.hash||'#dashboard').slice(1),validas=['dashboard','nova','carga','pendentes','rotas','calibracao','relatorios','usuarios','rastreio'];if(!validas.includes(id))id='dashboard';document.querySelectorAll('.page-section').forEach(function(el){el.classList.toggle('page-active',el.id===id)});document.querySelectorAll('[data-page-link]').forEach(function(el){el.classList.toggle('active',el.getAttribute('href')==='#'+id)});var titulos={dashboard:'Dashboard de Entregas',nova:'Nova carga',carga:'Entregas cadastradas',pendentes:'Ocorrências',rotas:'Planejamento de rotas',calibracao:'Calibrar etiquetas',relatorios:'Relatórios',usuarios:'Usuários',rastreio:'Rastreio ao vivo'};document.querySelector('.topbar-title b').textContent=titulos[id];if(id==='calibracao')renderPerfisEtiqueta();if(id==='usuarios'&&window.EzyUsuarios)window.EzyUsuarios.render();if(id==='rastreio'&&window.EzyRastreio)window.EzyRastreio.abrirMapa();window.scrollTo({top:0,behavior:'smooth'})}
     window.addEventListener('hashchange',abrirAba);
     render();
     renderPerfisEtiqueta();
     renderEmpresasRelatorio();
     abrirAba();
   })();
+  </script>
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    var SUPABASE_URL = 'https://idkaorlgguaxkmkimwon.supabase.co';
+    var SUPABASE_ANON_KEY = 'sb_publishable_s_dfu1MLULGLEld7DlligA_8390k2Pl';
+    var EDGE_FUNCTION_URL = SUPABASE_URL + '/functions/v1/entregas-criar-usuario';
+    var RASTREIO_KEY = 'ezy-rastreio-sessao';
+
+    var sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+    function mostrarErro(el,msg){el.textContent=msg;el.classList.remove('hidden')}
+    function esconderErro(el){el.classList.add('hidden')}
+
+    var perfilAtual=null;
+    var authGate=document.getElementById('auth-gate');
+    var authForm=document.getElementById('auth-form');
+    var authErro=document.getElementById('auth-erro');
+    var bootForm=document.getElementById('bootstrap-form');
+    var bootErro=document.getElementById('boot-erro');
+    var mostrarBootstrapBtn=document.getElementById('auth-mostrar-bootstrap');
+    var cancelarBootBtn=document.getElementById('boot-cancelar');
+
+    mostrarBootstrapBtn.addEventListener('click',function(){authForm.classList.add('hidden');mostrarBootstrapBtn.classList.add('hidden');bootForm.classList.remove('hidden')});
+    cancelarBootBtn.addEventListener('click',function(){bootForm.classList.add('hidden');authForm.classList.remove('hidden');mostrarBootstrapBtn.classList.remove('hidden')});
+
+    authForm.addEventListener('submit',async function(ev){
+      ev.preventDefault();esconderErro(authErro);
+      var login=document.getElementById('auth-login').value.trim(),senha=document.getElementById('auth-senha').value;
+      if(!login||!senha)return;
+      var btn=authForm.querySelector('.auth-submit');btn.disabled=true;
+      try{
+        var busca=await sb.rpc('entregas_buscar_email_por_login',{login_busca:login});
+        if(busca.error||!busca.data){mostrarErro(authErro,'Usuário ou senha inválidos.');return}
+        var entrar=await sb.auth.signInWithPassword({email:busca.data,password:senha});
+        if(entrar.error){mostrarErro(authErro,'Usuário ou senha inválidos.');return}
+        await carregarSessao();
+      }finally{btn.disabled=false}
+    });
+
+    bootForm.addEventListener('submit',async function(ev){
+      ev.preventDefault();esconderErro(bootErro);
+      var corpo={nome:document.getElementById('boot-nome').value.trim(),telefone:document.getElementById('boot-telefone').value.trim(),login:document.getElementById('boot-login').value.trim(),senha:document.getElementById('boot-senha').value};
+      if(!corpo.nome||!corpo.login||corpo.senha.length<8){mostrarErro(bootErro,'Preencha nome, usuário e uma senha com pelo menos 8 caracteres.');return}
+      var btn=bootForm.querySelector('.auth-submit');btn.disabled=true;
+      try{
+        var resp=await fetch(EDGE_FUNCTION_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(corpo)});
+        var dados=await resp.json();
+        if(!resp.ok){mostrarErro(bootErro,dados.erro||'Não foi possível criar o administrador.');return}
+        var entrar=await sb.auth.signInWithPassword({email:corpo.login.toLowerCase()+'@ezyentregas.local',password:corpo.senha});
+        if(entrar.error){mostrarErro(bootErro,'Administrador criado. Faça login normalmente.');bootForm.classList.add('hidden');authForm.classList.remove('hidden');mostrarBootstrapBtn.classList.remove('hidden');return}
+        await carregarSessao();
+      }catch(e){mostrarErro(bootErro,'Falha de conexão. Tente novamente.')}
+      finally{btn.disabled=false}
+    });
+
+    var sairBtn=document.getElementById('auth-sair');
+    if(sairBtn)sairBtn.addEventListener('click',async function(){
+      pararRastreio();
+      await sb.auth.signOut();
+      perfilAtual=null;
+      document.body.classList.remove('autenticado');
+      authGate.classList.remove('hidden');
+    });
+
+    async function carregarSessao(){
+      var sessaoResp=await sb.auth.getSession();
+      var sessao=sessaoResp.data&&sessaoResp.data.session;
+      if(!sessao){document.body.classList.remove('autenticado');authGate.classList.remove('hidden');return}
+      var perfilResp=await sb.from('entregas_perfis').select('id,nome,telefone,login,papel,ativo').eq('id',sessao.user.id).maybeSingle();
+      if(perfilResp.error||!perfilResp.data||!perfilResp.data.ativo){
+        await sb.auth.signOut();
+        mostrarErro(authErro,'Conta não encontrada ou desativada.');
+        document.body.classList.remove('autenticado');authGate.classList.remove('hidden');
+        return;
+      }
+      perfilAtual=perfilResp.data;
+      authGate.classList.add('hidden');
+      document.body.classList.add('autenticado');
+      document.querySelectorAll('[data-admin-only]').forEach(function(el){el.classList.toggle('hidden',perfilAtual.papel!=='admin')});
+      var avatar=document.querySelector('.top-avatar');
+      if(avatar)avatar.textContent=(perfilAtual.nome||'??').trim().slice(0,2).toUpperCase();
+      retomarRastreioSalvo();
+    }
+
+    // ---- Usuários (admin) ----
+    var usuariosLista=document.getElementById('usuarios-lista');
+    var usuariosErro=document.getElementById('usuarios-erro');
+
+    async function renderUsuarios(){
+      usuariosLista.innerHTML='<p class="empty">Carregando…</p>';
+      var resp=await sb.from('entregas_perfis').select('id,nome,telefone,login,papel,ativo,criado_em').order('criado_em',{ascending:false});
+      if(resp.error){usuariosLista.innerHTML='<p class="empty">Não foi possível carregar os usuários.</p>';return}
+      if(!resp.data.length){usuariosLista.innerHTML='<p class="empty">Nenhum usuário cadastrado ainda.</p>';return}
+      usuariosLista.innerHTML=resp.data.map(function(u){
+        return '<div class="pending-card"><div class="pending-card-main"><b>'+esc(u.nome)+'</b><small>'+esc(u.login)+' · '+esc(u.telefone||'sem telefone')+' · '+(u.papel==='admin'?'Admin':'Visualizador')+(u.ativo?'':' · inativo')+'</small></div></div>';
+      }).join('');
+    }
+
+    var cadastrarBtn=document.getElementById('cadastrar-usuario');
+    if(cadastrarBtn)cadastrarBtn.addEventListener('click',async function(){
+      esconderErro(usuariosErro);
+      var corpo={nome:document.getElementById('novo-usuario-nome').value.trim(),telefone:document.getElementById('novo-usuario-telefone').value.trim(),login:document.getElementById('novo-usuario-login').value.trim(),senha:document.getElementById('novo-usuario-senha').value,papel:document.getElementById('novo-usuario-papel').value};
+      if(!corpo.nome||!corpo.login||corpo.senha.length<8){mostrarErro(usuariosErro,'Preencha nome, usuário e uma senha com pelo menos 8 caracteres.');return}
+      var sessaoResp=await sb.auth.getSession();
+      var resp=await fetch(EDGE_FUNCTION_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+sessaoResp.data.session.access_token},body:JSON.stringify(corpo)});
+      var dados=await resp.json();
+      if(!resp.ok){mostrarErro(usuariosErro,dados.erro||'Não foi possível cadastrar.');return}
+      ['novo-usuario-nome','novo-usuario-telefone','novo-usuario-login','novo-usuario-senha'].forEach(function(id){document.getElementById(id).value=''});
+      renderUsuarios();
+    });
+
+    // ---- Rastreio (visualizador envia, admin acompanha) ----
+    var watchId=null,sessaoAtivaId=null,expiraEm=null;
+
+    function pararRastreio(){if(watchId!=null&&navigator.geolocation)navigator.geolocation.clearWatch(watchId);watchId=null}
+
+    async function registrarPosicao(pos){
+      if(!sessaoAtivaId||!perfilAtual)return;
+      if(expiraEm&&Date.now()>expiraEm){pararRastreio();return}
+      try{
+        await sb.from('entregas_localizacoes').insert({sessao_id:sessaoAtivaId,visualizador_id:perfilAtual.id,latitude:pos.coords.latitude,longitude:pos.coords.longitude,precisao_m:pos.coords.accuracy});
+      }catch(e){}
+    }
+
+    function comecarWatch(){
+      if(!navigator.geolocation)return;
+      pararRastreio();
+      watchId=navigator.geolocation.watchPosition(registrarPosicao,function(){},{enableHighAccuracy:true,maximumAge:20000,timeout:20000});
+    }
+
+    async function iniciarSessao(){
+      if(!perfilAtual||perfilAtual.papel!=='visualizador')return;
+      if(sessaoAtivaId&&expiraEm&&Date.now()<expiraEm)return;
+      var resp=await sb.from('entregas_sessoes_rota').insert({visualizador_id:perfilAtual.id}).select('id,expira_em').single();
+      if(resp.error||!resp.data)return;
+      sessaoAtivaId=resp.data.id;
+      expiraEm=new Date(resp.data.expira_em).getTime();
+      localStorage.setItem(RASTREIO_KEY,JSON.stringify({sessaoId:sessaoAtivaId,expiraEm:expiraEm}));
+      comecarWatch();
+    }
+
+    function retomarRastreioSalvo(){
+      if(!perfilAtual||perfilAtual.papel!=='visualizador')return;
+      try{
+        var salvo=JSON.parse(localStorage.getItem(RASTREIO_KEY)||'null');
+        if(salvo&&salvo.expiraEm>Date.now()){sessaoAtivaId=salvo.sessaoId;expiraEm=salvo.expiraEm;comecarWatch()}
+        else if(salvo)localStorage.removeItem(RASTREIO_KEY);
+      }catch(e){}
+    }
+
+    // ---- Mapa ao vivo (admin) ----
+    var mapa=null,marcadores={},canalRealtime=null;
+
+    async function abrirMapa(){
+      if(!perfilAtual||perfilAtual.papel!=='admin')return;
+      if(!mapa){
+        mapa=L.map('rastreio-mapa').setView([-22.9,-43.2],11);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapa);
+      }
+      setTimeout(function(){mapa.invalidateSize()},150);
+      await carregarPosicoesAtuais();
+      if(!canalRealtime){
+        canalRealtime=sb.channel('entregas-localizacoes').on('postgres_changes',{event:'INSERT',schema:'public',table:'entregas_localizacoes'},function(payload){atualizarMarcador(payload.new)}).subscribe();
+      }
+    }
+
+    async function carregarPosicoesAtuais(){
+      var listaEl=document.getElementById('rastreio-lista');
+      Object.keys(marcadores).forEach(function(id){mapa.removeLayer(marcadores[id])});
+      marcadores={};
+      var sessoesResp=await sb.from('entregas_sessoes_rota').select('id,visualizador_id,expira_em').eq('status','ativa').gt('expira_em',new Date().toISOString());
+      var sessoes=sessoesResp.data||[];
+      if(!sessoes.length){listaEl.innerHTML='<p class="empty">Nenhum entregador em rota no momento.</p>';return}
+      var linhas=[];
+      for(var i=0;i<sessoes.length;i++){
+        var sessao=sessoes[i];
+        var ultimaResp=await sb.from('entregas_localizacoes').select('latitude,longitude,criado_em').eq('sessao_id',sessao.id).order('criado_em',{ascending:false}).limit(1).maybeSingle();
+        var perfilResp=await sb.from('entregas_perfis').select('nome,telefone').eq('id',sessao.visualizador_id).maybeSingle();
+        var ultima=ultimaResp.data,perfil=perfilResp.data;
+        var nome=perfil?perfil.nome:'Entregador';
+        if(ultima){marcadores[sessao.visualizador_id]=L.marker([ultima.latitude,ultima.longitude]).addTo(mapa).bindPopup(esc(nome))}
+        linhas.push('<div class="pending-card"><div class="pending-card-main"><b>'+esc(nome)+'</b><small>'+(ultima?('Última posição: '+new Date(ultima.criado_em).toLocaleTimeString('pt-BR')):'Aguardando posição')+'</small></div></div>');
+      }
+      listaEl.innerHTML=linhas.join('');
+    }
+
+    function atualizarMarcador(loc){
+      if(!mapa)return;
+      if(marcadores[loc.visualizador_id])marcadores[loc.visualizador_id].setLatLng([loc.latitude,loc.longitude]);
+      else marcadores[loc.visualizador_id]=L.marker([loc.latitude,loc.longitude]).addTo(mapa);
+    }
+
+    window.EzyRastreio={iniciarSessao:iniciarSessao,abrirMapa:abrirMapa};
+    window.EzyUsuarios={render:renderUsuarios};
+
+    await carregarSessao();
   </script>
 </body>
 </html>

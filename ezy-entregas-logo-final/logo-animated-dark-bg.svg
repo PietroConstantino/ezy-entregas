@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="280" viewBox="0 0 620 140">
+  <defs>
+    <linearGradient id="mtlBrand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0D2A47"/>
+      <stop offset="18%" stop-color="#1AC6A0"/>
+      <stop offset="35%" stop-color="#123457"/>
+      <stop offset="50%" stop-color="#8FF2D6"/>
+      <stop offset="65%" stop-color="#123457"/>
+      <stop offset="82%" stop-color="#17B996"/>
+      <stop offset="100%" stop-color="#0A1E33"/>
+    </linearGradient>
+    <radialGradient id="shineBrand" cx="35%" cy="20%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="tealText" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0A1E33"/>
+      <stop offset="50%" stop-color="#8FF2D6"/>
+      <stop offset="100%" stop-color="#123457"/>
+    </linearGradient>
+
+    <!-- animated bronze band that scrolls continuously = shimmer / movement -->
+    <linearGradient id="bronzeTextAnim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="90" y2="0" spreadMethod="repeat">
+      <stop offset="0%" stop-color="#3E220C"/>
+      <stop offset="18%" stop-color="#8C5A2B"/>
+      <stop offset="32%" stop-color="#E8B98A"/>
+      <stop offset="46%" stop-color="#B87333"/>
+      <stop offset="60%" stop-color="#5C3317"/>
+      <stop offset="74%" stop-color="#E8B98A"/>
+      <stop offset="88%" stop-color="#8C5A2B"/>
+      <stop offset="100%" stop-color="#3E220C"/>
+      <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="-90 0" dur="2.6s" repeatCount="indefinite"/>
+    </linearGradient>
+
+    <linearGradient id="speedFade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#B87333" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#E8B98A" stop-opacity="0.95"/>
+    </linearGradient>
+  </defs>
+
+  <!-- icon -->
+  <g transform="translate(15,12) scale(1.85)">
+    <path d="M26 4C15.5 4 7 12.5 7 23c0 14.5 19 25 19 25s19-10.5 19-25C45 12.5 36.5 4 26 4z" fill="url(#mtlBrand)"/>
+    <path d="M26 4C15.5 4 7 12.5 7 23c0 14.5 19 25 19 25s19-10.5 19-25C45 12.5 36.5 4 26 4z" fill="url(#shineBrand)"/>
+    <circle cx="26" cy="22" r="11" fill="#061323"/>
+    <path d="M20 22.5l4 4 8-8.5" stroke="#EAF1FB" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="130" y="72" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="800" letter-spacing="-0.5">
+    <tspan fill="#EAF1FB">Ezy</tspan><tspan fill="url(#tealText)">Entregas</tspan>
+  </text>
+
+  <!-- tagline: bronze metallic shimmer, skewed with speed lines for a sense of motion -->
+  <g transform="translate(130,84)">
+    <g transform="skewX(-8)">
+      <rect x="0" y="8" width="7" height="2.4" rx="1.2" fill="url(#speedFade)" opacity="0.4"/>
+      <rect x="10" y="8" width="12" height="2.4" rx="1.2" fill="url(#speedFade)" opacity="0.7"/>
+      <rect x="25" y="8" width="17" height="2.4" rx="1.2" fill="url(#speedFade)"/>
+      <text x="48" y="12" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="800" letter-spacing="1.8" fill="url(#bronzeTextAnim)">ENTREGAR FICOU FÁCIL</text>
+    </g>
+  </g>
+</svg>
