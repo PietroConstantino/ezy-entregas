@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Manual atual do sistema Ezy Entregas</title>
+  <style>
+    @page { size:A4; margin:17mm; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:#172033; font:13.5px/1.5 Arial,sans-serif; }
+    header { display:flex; align-items:center; gap:22px; padding:24px 28px; border-radius:15px; background:linear-gradient(135deg,#071630,#173b70 65%,#56256d); color:#fff; }
+    header img { width:190px; height:auto; } header div { flex:1; }
+    h1 { margin:0 0 6px; font-size:27px; } header p { margin:0; color:#cedcf5; }
+    h2 { margin:25px 0 9px; color:#102247; font-size:19px; border-bottom:2px solid #dfe7f4; padding-bottom:5px; }
+    h3 { margin:15px 0 6px; color:#244d85; font-size:15px; }
+    p { margin:6px 0 10px; } ul,ol { margin:6px 0 10px; padding-left:22px; } li { margin:4px 0; }
+    .intro,.note,.warning { padding:14px 17px; border-radius:9px; margin:16px 0; }
+    .intro { background:#edf9f5; border-left:5px solid #16a778; }
+    .note { background:#edf4ff; border-left:5px solid #3e78cf; }
+    .warning { background:#fff5dc; border-left:5px solid #e5a400; }
+    .flow { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:14px 0; }
+    .flow div { padding:11px 8px; border-radius:8px; background:#102247; color:#fff; text-align:center; font-weight:bold; }
+    table { width:100%; border-collapse:collapse; margin:10px 0 15px; break-inside:avoid; }
+    th,td { padding:9px 10px; border:1px solid #d6deeb; text-align:left; vertical-align:top; }
+    th { background:#eaf0fa; color:#102247; }
+    .section { break-inside:auto; }
+    .card { margin:10px 0; padding:13px 16px; border:1px solid #d7deea; border-radius:9px; break-inside:avoid; }
+    .page { break-before:page; }
+    code { color:#7139aa; font-weight:bold; }
+    footer { margin-top:25px; border-top:1px solid #d7deea; padding-top:10px; color:#68738a; font-size:11px; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="assets/ezy-entregas-logo-v1.png" alt="Ezy Entregas">
+    <div><h1>Ezy Entregas</h1><p>Manual detalhado do funcionamento atual — da coleta da etiqueta até a conclusão da entrega</p></div>
+  </header>
+
+  <div class="intro"><strong>Objetivo do sistema:</strong> cadastrar encomendas por fotografia de etiqueta, organizar a coleta, agrupar entregas, montar rotas, registrar resultados em campo e produzir relatórios operacionais.</div>
+
+  <h2>1. Visão geral do fluxo</h2>
+  <div class="flow"><div>1. Fotografar</div><div>2. Ler e conferir</div><div>3. Confirmar coleta</div><div>4. Montar rota</div><div>5. Sair para entrega</div><div>6. Registrar resultado</div><div>7. Tratar ocorrências</div><div>8. Emitir relatório</div></div>
+  <p>Cada encomenda percorre estados operacionais. Ao ser lida, fica aguardando coleta. Depois da confirmação, passa para coletada. Durante a rota pode ser concluída como entregue, não entregue ou endereço não localizado. Ocorrências podem voltar para uma nova tentativa.</p>
+
+  <h2>2. Painel principal</h2>
+  <p>O Dashboard apresenta um retrato da operação armazenada no dispositivo:</p>
+  <ul>
+    <li>Total de mercadorias cadastradas.</li>
+    <li>Quantidade de mercadorias coletadas.</li>
+    <li>Número de paradas e quantidade de CEPs únicos.</li>
+    <li>Gráfico de distribuição entre entregues, coletadas, aguardando, não entregues e endereços não localizados.</li>
+    <li>Resumo das áreas de CEP, usando cores para facilitar a identificação visual.</li>
+  </ul>
+  <p>Os indicadores são interativos: podem abrir a listagem correspondente, aplicar filtros ou direcionar para o planejamento da rota.</p>
+
+  <h2>3. Entrada de uma nova encomenda</h2>
+  <h3>3.1 Formas de capturar a etiqueta</h3>
+  <ul>
+    <li><strong>Abrir câmera:</strong> fotografa a etiqueta diretamente pelo celular.</li>
+    <li><strong>Selecionar fotografias:</strong> permite escolher uma ou várias imagens existentes.</li>
+    <li><strong>Fila em lote:</strong> guarda múltiplas fotografias e processa uma após a outra.</li>
+  </ul>
+  <p>A tela mostra a prévia da imagem e o progresso de cada fase da leitura.</p>
+
+  <h3>3.2 Tratamento da imagem</h3>
+  <p>Antes da leitura local, o sistema melhora contraste, converte a imagem para tons de cinza, amplia quando necessário e cria um segundo recorte concentrado na região normalmente ocupada pelo destinatário.</p>
+
+  <h3>3.3 Estratégia econômica de leitura</h3>
+  <ol>
+    <li>O OCR local Tesseract analisa a etiqueta completa.</li>
+    <li>Uma segunda leitura analisa o bloco do destinatário.</li>
+    <li>Os textos são combinados e interpretados pelo sistema.</li>
+    <li>Se nome, endereço e CEP válido forem encontrados, a leitura é aceita sem custo de IA.</li>
+    <li>Se estiver incompleta, uma imagem reduzida é enviada ao modelo GPT-4.1 nano.</li>
+    <li>Se a IA estiver indisponível, os dados locais são preservados para conferência manual.</li>
+  </ol>
+  <div class="note"><strong>Economia:</strong> a inteligência artificial é usada apenas nas etiquetas difíceis. Imagens grandes são reduzidas para até 1280 pixels no maior lado antes do envio.</div>
+
+  <h3>3.4 Dados extraídos</h3>
+  <table>
+    <thead><tr><th>Campo</th><th>Uso</th></tr></thead>
+    <tbody>
+      <tr><td>Setor</td><td>Código de triagem ou rota, como SRJ13_S.</td></tr>
+      <tr><td>Nome</td><td>Identificação do destinatário.</td></tr>
+      <tr><td>Endereço e complemento</td><td>Logradouro, número, bairro, bloco, apartamento ou referência.</td></tr>
+      <tr><td>CEP, cidade e UF</td><td>Localização e agrupamento geográfico.</td></tr>
+      <tr><td>Código</td><td>Rastreio ou identificação principal do pacote.</td></tr>
+      <tr><td>Nota</td><td>Número de nota fiscal, pedido ou documento equivalente.</td></tr>
+      <tr><td>Observação</td><td>Orientação destinada ao entregador.</td></tr>
+      <tr><td>Transportadora e modelo</td><td>Classificação visual da etiqueta quando feita pela IA.</td></tr>
+      <tr><td>Confiança e alertas</td><td>Indicação da qualidade da leitura e campos duvidosos.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.5 Conferência e descarte</h3>
+  <p>Depois da leitura, o operador pode revisar e corrigir os campos antes de adicionar. Também pode descartar a fotografia e a leitura. No modo em lote, etiquetas com nome e endereço são registradas automaticamente e ficam aguardando a confirmação da coleta.</p>
+
+  <div class="page"></div>
+  <h2>4. Confirmação da coleta</h2>
+  <p>As mercadorias recém-lidas aparecem em uma área específica da nova carga. O operador pode selecionar registros individualmente ou usar “Selecionar todos”. Ao confirmar:</p>
+  <ul>
+    <li>o status muda de <code>aguardando</code> para <code>coletado</code>;</li>
+    <li>a data e hora da coleta são registradas;</li>
+    <li>a mercadoria passa a aparecer na área de entregas cadastradas;</li>
+    <li>ela fica disponível para seleção e planejamento de rota.</li>
+  </ul>
+  <p>O sistema exige confirmação antes das ações em lote para reduzir alterações acidentais.</p>
+
+  <h2>5. Entregas cadastradas</h2>
+  <p>A central de entregas permite pesquisar por setor, destinatário, endereço, CEP, código ou nota fiscal. Mercadorias do mesmo endereço são agrupadas visualmente, facilitando o tratamento de vários volumes destinados à mesma parada.</p>
+  <h3>5.1 Ações disponíveis</h3>
+  <ul>
+    <li>Selecionar resultados ou todos os itens de um mesmo endereço.</li>
+    <li>Excluir um registro ou vários registros selecionados, mediante confirmação.</li>
+    <li>Marcar itens como coletados.</li>
+    <li>Enviar itens selecionados para a montagem da rota.</li>
+    <li>Registrar em lote: entregue, não entregue ou endereço não localizado.</li>
+  </ul>
+  <div class="warning"><strong>Regra operacional:</strong> uma entrega precisa estar marcada como coletada antes que seu resultado possa ser concluído.</div>
+
+  <h2>6. Planejamento da rota</h2>
+  <p>A tela de rotas trabalha com as encomendas coletadas e organiza a operação por CEP.</p>
+  <ul>
+    <li>Seleção de um, vários ou todos os CEPs disponíveis.</li>
+    <li>Exibição da quantidade de pedidos por região.</li>
+    <li>Remoção de endereços duplicados na abertura do aplicativo de navegação.</li>
+    <li>Ordenação por proximidade, com alternativa entre mais próximos ou mais distantes primeiro.</li>
+    <li>Persistência temporária da rota ativa durante a sessão do navegador.</li>
+  </ul>
+  <h3>6.1 Integração com navegação</h3>
+  <p>O Google Maps recebe até dez endereços em cada abertura. Caso existam mais paradas, o sistema abre as dez primeiras e informa quantas restam para uma segunda rota. No Waze, o sistema abre a próxima parada disponível.</p>
+
+  <h3>6.2 Acompanhamento dentro da rota</h3>
+  <p>Cada encomenda permanece visível na ordem da rota, contendo destinatário, endereço, código e nota. O entregador pode registrar diretamente:</p>
+  <ul>
+    <li><strong>Entregue:</strong> grava o horário de conclusão.</li>
+    <li><strong>Endereço não localizado:</strong> cria uma ocorrência específica.</li>
+    <li><strong>Não entregue:</strong> registra insucesso e inicia o controle de tentativas.</li>
+  </ul>
+  <p>Pedidos finalizados continuam visíveis na rota ativa com seu resultado, permitindo acompanhar o andamento do percurso.</p>
+
+  <div class="page"></div>
+  <h2>7. Entrega e estados operacionais</h2>
+  <table>
+    <thead><tr><th>Status</th><th>Significado</th><th>Próxima ação possível</th></tr></thead>
+    <tbody>
+      <tr><td>Aguardando</td><td>Etiqueta cadastrada, mas coleta ainda não confirmada.</td><td>Confirmar coleta.</td></tr>
+      <tr><td>Coletado</td><td>Volume recebido e disponível para rota.</td><td>Entregar ou registrar ocorrência.</td></tr>
+      <tr><td>Entregue</td><td>Entrega concluída, com data e hora registradas.</td><td>Consultar ou corrigir via relatório.</td></tr>
+      <tr><td>Não entregue</td><td>Tentativa sem conclusão.</td><td>Nova tentativa ou confirmação posterior.</td></tr>
+      <tr><td>Endereço não localizado</td><td>Local informado não foi encontrado.</td><td>Corrigir, marcar entregue ou criar nova tentativa.</td></tr>
+      <tr><td>Nova tentativa</td><td>Ocorrência devolvida à operação.</td><td>Coletar novamente e incluir em rota.</td></tr>
+      <tr><td>Outros</td><td>Classificação adicional usada em relatórios.</td><td>Revisar e definir o resultado.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>8. Ocorrências</h2>
+  <p>A área de ocorrências concentra entregas não concluídas e também pode exibir todos os registros por filtro.</p>
+  <ul>
+    <li>Filtrar não entregues, endereços não localizados, entregues ou todos.</li>
+    <li>Selecionar uma ou várias ocorrências.</li>
+    <li>Marcar posteriormente como entregue.</li>
+    <li>Manter como não entregue.</li>
+    <li>Enviar para nova tentativa, incrementando o contador de tentativas.</li>
+  </ul>
+  <p>O menu apresenta um indicador com a quantidade total de ocorrências abertas.</p>
+
+  <h2>9. Calibração de etiquetas</h2>
+  <p>O sistema possui perfis predefinidos para Mercado Livre, Shopee, Loggi, Jadlog, FedEx, UPS e Correios/SEDEX. O operador pode ativar ou desativar os modelos usados no dia.</p>
+  <h3>9.1 Perfis personalizados</h3>
+  <ul>
+    <li>Cadastrar nome da transportadora ou modelo.</li>
+    <li>Informar textos e marcas normalmente encontrados na etiqueta.</li>
+    <li>Adicionar orientações sobre onde localizar o destinatário e o CEP.</li>
+    <li>Excluir perfis personalizados.</li>
+  </ul>
+  <h3>9.2 Teste de reconhecimento</h3>
+  <p>Uma fotografia pode ser usada para testar o reconhecimento contra os modelos ativos. O resultado apresenta transportadora, modelo, confiança e alertas. A fotografia de teste é descartada após o processamento; apenas a configuração do perfil permanece.</p>
+
+  <div class="page"></div>
+  <h2>10. Relatórios</h2>
+  <p>A central de relatórios permite combinar filtros de data, empresa, organização, status e busca textual.</p>
+  <h3>10.1 Formas de organização</h3>
+  <ul>
+    <li>Relatório geral.</li>
+    <li>Agrupamento por CEP.</li>
+    <li>Resultado de uma busca específica.</li>
+  </ul>
+  <h3>10.2 Visualização e correção</h3>
+  <p>Antes de exportar, o operador pode visualizar os registros, alterar status e acrescentar observação de até 200 caracteres. As alterações só são aplicadas ao sistema após confirmação.</p>
+  <h3>10.3 Saídas disponíveis</h3>
+  <ul>
+    <li><strong>PDF/impressão:</strong> relatório visual com resumo de status, destinatários, endereços, CEPs, códigos, notas e observações.</li>
+    <li><strong>Excel:</strong> exportação dos dados filtrados para análise externa.</li>
+  </ul>
+
+  <h2>11. Armazenamento e funcionamento atual</h2>
+  <div class="card">
+    <strong>Dados operacionais:</strong> ficam armazenados no navegador do aparelho por meio de armazenamento local. Isso permite manter os registros entre acessos feitos no mesmo navegador.
+  </div>
+  <div class="card">
+    <strong>Configuração da rota:</strong> a rota ativa é mantida na sessão atual do navegador.
+  </div>
+  <div class="card">
+    <strong>Leitura inteligente:</strong> a API protegida no servidor envia somente a imagem necessária e as instruções de extração para a OpenAI; a chave não fica exposta no navegador.
+  </div>
+
+  <h2>12. Limitações da versão atual</h2>
+  <ul>
+    <li>Não existe login de usuário ou separação de permissões.</li>
+    <li>Os dados não estão sincronizados entre aparelhos.</li>
+    <li>Limpar o armazenamento do navegador pode remover os registros locais.</li>
+    <li>Ainda não há banco de dados central, backup automático ou auditoria por usuário.</li>
+    <li>O resultado do OCR depende da iluminação, enquadramento e legibilidade da etiqueta.</li>
+    <li>O Google Maps limita cada abertura a dez paradas.</li>
+    <li>O sistema ainda funciona como aplicação web e não como aplicativo publicado na Play Store.</li>
+  </ul>
+
+  <h2>13. Resumo operacional diário</h2>
+  <ol>
+    <li>Abrir “Nova carga” e fotografar ou selecionar as etiquetas.</li>
+    <li>Aguardar a leitura local e conferir os campos extraídos.</li>
+    <li>Corrigir qualquer informação duvidosa.</li>
+    <li>Selecionar as mercadorias e confirmar “Coletado”.</li>
+    <li>Acessar as entregas cadastradas e escolher os pedidos da rota.</li>
+    <li>Ordenar os CEPs e abrir o Google Maps ou Waze.</li>
+    <li>Em cada parada, registrar entregue, não entregue ou endereço não localizado.</li>
+    <li>Ao final, tratar ocorrências e emitir o relatório do período.</li>
+  </ol>
+
+  <footer>Documento baseado nas funcionalidades presentes no sistema em 14 de agosto de 2026.</footer>
+</body>
+</html>

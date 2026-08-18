@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Plano de evolução — Segurança, biometria e Play Store</title>
+  <style>
+    @page { size: A4; margin: 18mm; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #172033; font: 14px/1.5 Arial, sans-serif; }
+    header { display:flex; align-items:center; gap:20px; padding: 22px 28px; border-radius: 14px; background: #102247; color: #fff; }
+    header img { width:180px; height:auto; }
+    header div { flex:1; }
+    h1 { margin: 0 0 6px; font-size: 24px; }
+    header p { margin: 0; color: #cbd9f4; }
+    .summary { margin: 20px 0; padding: 16px 20px; border-left: 6px solid #16a778; border-radius: 8px; background: #edf9f5; }
+    h2 { margin: 24px 0 9px; color: #102247; font-size: 18px; }
+    h3 { margin: 0 0 5px; font-size: 16px; color: #fff; }
+    .step { margin: 12px 0; padding: 16px 18px; border: 1px solid #d7deea; border-radius: 10px; break-inside: avoid; }
+    .step-head { margin: -16px -18px 12px; padding: 10px 16px; border-radius: 9px 9px 0 0; background: #274a82; color: #fff; }
+    ul { margin: 7px 0 0; padding-left: 21px; }
+    li { margin: 4px 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { padding: 10px 12px; border: 1px solid #d7deea; text-align: left; vertical-align: top; }
+    th { background: #eaf0fa; color: #102247; }
+    .decision { margin-top: 20px; padding: 15px 18px; border-radius: 9px; background: #fff6df; color: #604708; }
+    footer { margin-top: 25px; padding-top: 10px; border-top: 1px solid #d7deea; color: #68738a; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="assets/ezy-entregas-logo-v1.png" alt="Ezy Entregas">
+    <div><h1>Ezy Entregas</h1><p>Plano de evolução: segurança, acesso biométrico e publicação na Play Store</p></div>
+  </header>
+
+  <div class="summary"><strong>Ordem recomendada:</strong> proteger dados e APIs → implementar autenticação → empacotar e publicar o aplicativo Android.</div>
+
+  <section class="step">
+    <div class="step-head"><h3>Etapa 1 — Segurança e banco de dados</h3></div>
+    <ul>
+      <li>Retirar dados sensíveis do armazenamento local do navegador.</li>
+      <li>Criar banco de dados centralizado, usuários, funções e permissões.</li>
+      <li>Implementar sessões seguras, expiração de acesso e encerramento remoto.</li>
+      <li>Proteger APIs com autenticação, validação, limite de requisições e tamanho de upload.</li>
+      <li>Aplicar proteção contra abuso, injeção, scripts maliciosos e acesso indevido.</li>
+      <li>Configurar logs de auditoria, backups e limites de gastos da OpenAI.</li>
+      <li>Revisar tratamento de fotografias e dados pessoais conforme a LGPD.</li>
+    </ul>
+  </section>
+
+  <section class="step">
+    <div class="step-head"><h3>Etapa 2 — Login por biometria</h3></div>
+    <ul>
+      <li>Usar Passkeys/WebAuthn como mecanismo principal de autenticação.</li>
+      <li>Permitir que o aparelho valide impressão digital, reconhecimento facial ou PIN.</li>
+      <li>Não armazenar fotografias do rosto nem cópias de impressões digitais.</li>
+      <li>Disponibilizar recuperação segura de conta e acesso alternativo autorizado.</li>
+      <li>Registrar dispositivos e permitir que o administrador revogue acessos.</li>
+    </ul>
+  </section>
+
+  <section class="step">
+    <div class="step-head"><h3>Etapa 3 — Aplicativo Android e Play Store</h3></div>
+    <ul>
+      <li>Transformar o sistema em aplicativo Android com Capacitor.</li>
+      <li>Configurar câmera, arquivos, biometria, ícone e tela de abertura.</li>
+      <li>Testar funcionamento, desempenho, segurança e diferentes versões do Android.</li>
+      <li>Gerar pacote Android App Bundle (AAB) assinado.</li>
+      <li>Preparar política de privacidade, declaração de segurança dos dados e materiais da loja.</li>
+      <li>Publicar primeiro em teste interno e, após validação, enviar para produção.</li>
+    </ul>
+  </section>
+
+  <section class="step">
+    <div class="step-head"><h3>Etapa 4 — Comprovante digital e assinatura do recebedor</h3></div>
+    <ul>
+      <li>Solicitar o nome completo da pessoa que recebeu a encomenda.</li>
+      <li>Permitir selecionar o documento apresentado: CPF ou RG.</li>
+      <li>Aplicar máscara automática ao CPF no formato 000.000.000-00.</li>
+      <li>Aplicar máscara configurável ao RG, respeitando diferenças de formato entre os estados.</li>
+      <li>Disponibilizar uma área para assinatura manuscrita diretamente na tela do celular ou tablet, usando toque ou caneta digital.</li>
+      <li>Oferecer botões para limpar, refazer e confirmar a assinatura antes de concluir.</li>
+      <li>Vincular o comprovante à encomenda, ao entregador, à data e ao horário da entrega.</li>
+      <li>Exibir uma tela de conferência antes da gravação definitiva.</li>
+    </ul>
+    <h3>Informações do comprovante</h3>
+    <table>
+      <tbody>
+        <tr><td>Recebedor</td><td>Nome completo obrigatório.</td></tr>
+        <tr><td>Documento</td><td>CPF ou RG com validação e máscara visual.</td></tr>
+        <tr><td>Assinatura</td><td>Traço capturado na tela sensível ao toque.</td></tr>
+        <tr><td>Entrega</td><td>Código da encomenda, data, horário e responsável pela operação.</td></tr>
+        <tr><td>Comprovante</td><td>Consulta posterior e inclusão opcional no relatório de entrega.</td></tr>
+      </tbody>
+    </table>
+    <h3>Proteção dos dados</h3>
+    <ul>
+      <li>Criptografar documento e assinatura durante transmissão e armazenamento.</li>
+      <li>Mostrar o documento parcialmente oculto nas consultas, por exemplo ***.***.***-09.</li>
+      <li>Restringir a visualização completa a usuários autorizados.</li>
+      <li>Registrar quem consultou ou alterou o comprovante.</li>
+      <li>Definir prazo de retenção e procedimento de exclusão conforme a LGPD.</li>
+      <li>Não tratar a assinatura desenhada como autenticação biométrica do usuário.</li>
+    </ul>
+  </section>
+
+  <h2>Arquitetura recomendada</h2>
+  <table>
+    <thead><tr><th>Componente</th><th>Recomendação</th></tr></thead>
+    <tbody>
+      <tr><td>Frontend</td><td>Aplicação atual adaptada para PWA e Capacitor</td></tr>
+      <tr><td>Backend</td><td>Cloudflare Functions/Workers</td></tr>
+      <tr><td>Banco de dados</td><td>Cloudflare D1</td></tr>
+      <tr><td>Autenticação</td><td>Passkeys/WebAuthn com sessões seguras</td></tr>
+      <tr><td>Aplicativo Android</td><td>Capacitor com geração de arquivo AAB</td></tr>
+      <tr><td>Comprovante de entrega</td><td>Nome, CPF ou RG mascarado e assinatura por toque</td></tr>
+    </tbody>
+  </table>
+
+  <div class="decision"><strong>Decisão inicial:</strong> confirmar o uso do Cloudflare D1 para armazenar usuários e entregas. Com essa definição, o desenvolvimento pode começar pela auditoria e proteção de segurança.</div>
+
+  <footer>Documento gerado em 14 de agosto de 2026.</footer>
+</body>
+</html>

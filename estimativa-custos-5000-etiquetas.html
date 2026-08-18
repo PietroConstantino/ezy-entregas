@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Estimativa de custos — 5.000 etiquetas</title>
+  <style>
+    @page { size: A4; margin: 20mm; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #172033; font: 15px/1.55 Arial, sans-serif; }
+    header { display:flex; align-items:center; gap:20px; padding: 22px 28px; border-radius: 14px; background: #102247; color: white; }
+    header img { width:180px; height:auto; }
+    header div { flex:1; }
+    h1 { margin: 0 0 5px; font-size: 25px; }
+    header p { margin: 0; color: #cbd9f4; }
+    h2 { margin: 28px 0 10px; font-size: 18px; color: #102247; }
+    .highlight { margin: 20px 0; padding: 18px 22px; border-left: 6px solid #16a778; border-radius: 8px; background: #edf9f5; }
+    .highlight strong { display: block; color: #087654; font-size: 25px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { padding: 12px 14px; border: 1px solid #d7deea; text-align: left; }
+    th { background: #eaf0fa; color: #102247; }
+    td:last-child { font-weight: bold; white-space: nowrap; }
+    ul { padding-left: 22px; }
+    .note { margin-top: 25px; padding: 14px 17px; border-radius: 8px; background: #fff6df; color: #664a07; font-size: 13px; }
+    footer { margin-top: 30px; padding-top: 12px; border-top: 1px solid #d7deea; color: #68738a; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="assets/ezy-entregas-logo-v1.png" alt="Ezy Entregas">
+    <div><h1>Ezy Entregas</h1><p>Estimativa mensal de custo para leitura de 5.000 etiquetas</p></div>
+  </header>
+
+  <div class="highlight">
+    Reserva mensal recomendada
+    <strong>R$ 15,00</strong>
+    Margem conservadora para cobrir as leituras realizadas pela inteligência artificial.
+  </div>
+
+  <h2>Cenários estimados</h2>
+  <table>
+    <thead><tr><th>Cenário</th><th>Etiquetas enviadas à IA</th><th>Custo mensal estimado</th></tr></thead>
+    <tbody>
+      <tr><td>OCR local reconhece 90%</td><td>500</td><td>R$ 1 a R$ 2</td></tr>
+      <tr><td>OCR local reconhece 70%</td><td>1.500</td><td>R$ 3 a R$ 5</td></tr>
+      <tr><td>Todas precisam da IA</td><td>5.000</td><td>R$ 10 a R$ 15</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Como o custo foi reduzido</h2>
+  <ul>
+    <li>O OCR local gratuito é executado primeiro.</li>
+    <li>A IA é acionada somente quando nome, endereço ou CEP não forem reconhecidos adequadamente.</li>
+    <li>O modelo utilizado é o GPT-4.1 nano.</li>
+    <li>Imagens grandes são reduzidas antes do envio, diminuindo o consumo de tokens.</li>
+  </ul>
+
+  <div class="note">
+    Valores aproximados. A cobrança efetiva pode variar conforme resolução da imagem, quantidade de tokens, repetição de leituras, cotação do dólar, impostos e tarifas do meio de pagamento. Hospedagem e conexão com a internet não estão incluídas.
+  </div>
+
+  <footer>Documento gerado em 14 de agosto de 2026.</footer>
+</body>
+</html>
